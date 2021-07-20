@@ -1,5 +1,3 @@
-const { beforeAll } = require('@jest/globals');
-const { connect } = require('http2');
 const Ask = require('./lib/Ask');
 const Callback = require('./lib/Callback');
 
@@ -31,4 +29,6 @@ const mainMenu = () => {
                 break;
         }
     }
+    const ask = new Ask;
+    ask.askQuestion(question, cb);
 }
