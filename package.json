@@ -1,0 +1,28 @@
+{
+  "name": "employee-management-CLapp",
+  "version": "1.0.0",
+  "description": "This is a command line app connected to a database that stores employees, roles, and other various work related information that can be accessed through a command line user interface.",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maxd66/employee-management-CLapp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/maxd66/employee-management-CLapp/issues"
+  },
+  "homepage": "https://github.com/maxd66/employee-management-CLapp#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^8.1.2",
+    "mysql": "^2.18.1"
+  }
+}
