@@ -20,12 +20,14 @@ let deptChoices = [];
 let roleChoices = [];
 
 const getRoles = () => {
-  connection.query(`SELECT id, title FROM roles`, (err, res) => {
+  connection.query(`SELECT id, title FROM role`, (err, res) => {
     if (err) {
       console.log(err);
       return;
     }
-    return res;
+    res.forEach(({ title, id }) => {
+        roleChoices.push({name: title, value: id });
+      });
   });
 };
 
@@ -75,7 +77,7 @@ const mainMenu = () => {
         ask.askQuestion(addDeptQuestion, (ans) => {
           connection.query(`INSERT INTO department SET ?`, ans, (err, res) => {
             if (err) throw err;
-            console.log(`You successfully add a new department`);
+            console.log(`You successfully added a new department`);
             mainMenu();
           });
         });
@@ -109,7 +111,8 @@ const mainMenu = () => {
           };
           connection.query(`INSERT INTO role SET ?`, ansObj, (err, res) => {
             if (err) throw err;
-            console.log(`You successfully add a new role`);
+            console.log(`You successfully added a new role`);
+            deptChoices = [];
             mainMenu();
           });
         });
@@ -119,16 +122,15 @@ const mainMenu = () => {
         const roles = getRoles();
         const addEmployeeQuestion = [
           {
-            name: "firstName",
+            name: "first_name",
             message:
               "What is the first name of the employee you would like to add?",
             type: "input",
           },
           {
-            name: "salary",
-            message:
-              "What is the last name of the employee you would like to add?",
-            type: "input",
+              name: "last_name",
+              message: "What is the last name of the employee you would like to add?",
+              type: "input"
           },
           {
             name: "role_id",
@@ -138,14 +140,15 @@ const mainMenu = () => {
           },
         ];
         ask.askQuestion(addEmployeeQuestion, (ans) => {
-          for (i = 0; i < roles.length; i++) {
-            if (ans.role_id === roles[i].title) {
-              ans.role_id = roles[i].id;
-            }
-          }
-          connection.query(`INSERT INTO department SET ?`, ans, (err, res) => {
+            const ansObj = {
+                first_name: ans.first_name,
+                last_name: ans.last_name,
+                role_id: parseInt(ans.role_id),
+              };
+          connection.query(`INSERT INTO employee SET ?`, ansObj, (err, res) => {
             if (err) throw err;
-            console.log(`You successfully add a new department`);
+            console.log(`You successfully added a new employee`);
+            roleChoices = [];
             mainMenu();
           });
         });
@@ -160,6 +163,7 @@ const mainMenu = () => {
       case "Update employee role":
         break;
       case "exit":
+          connection.end()
         break;
     }
   };
