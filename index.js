@@ -1,5 +1,4 @@
 const Ask = require('./lib/Ask');
-const Callback = require('./lib/Callback');
 const mysql = require('mysql');
 
 const connection = mysql.createConnection({
@@ -16,7 +15,6 @@ const connection = mysql.createConnection({
     database: 'employee_management',
   });
   
-const call = new Callback;
 const ask = new Ask;
 
 const mainMenu = () => {
@@ -35,7 +33,6 @@ const mainMenu = () => {
                     message: 'What is the name of the department you would like to add?',
                     type: 'input'
                 }]
-                const chosenTable = 'department'
                 ask.askQuestion(addDeptQuestion, ans => {
                     connection.query(`INSERT INTO department SET ?`, ans, (err, res) => {
                       if (err) throw err;
