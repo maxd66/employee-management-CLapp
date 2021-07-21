@@ -1,5 +1,23 @@
 const Ask = require('./lib/Ask');
 const Callback = require('./lib/Callback');
+const mysql = require('mysql');
+
+const connection = mysql.createConnection({
+    host: 'localhost',
+  
+    // Your port; if not 3306
+    port: 3306,
+  
+    // Your username
+    user: 'root',
+  
+    // Your password
+    password: 'password',
+    database: 'employee_management',
+  });
+  
+const call = new Callback;
+const ask = new Ask;
 
 const mainMenu = () => {
     const question = [{
@@ -12,6 +30,20 @@ const mainMenu = () => {
         const choice = ans.menuChoice;
         switch (choice) {
             case 'Add department':
+                const addDeptQuestion = [{
+                    name: 'name',
+                    message: 'What is the name of the department you would like to add?',
+                    type: 'input'
+                }]
+                const chosenTable = 'department'
+                ask.askQuestion(addDeptQuestion, ans => {
+                    connection.query(`INSERT INTO department SET ?`, ans, (err, res) => {
+                      if (err) throw err;
+                      console.log(`You successfully add a new department`)
+                      console.table(res)
+                      mainMenu();
+                    })
+                });
                 break;
             case 'Add role':
                 break;
@@ -29,6 +61,10 @@ const mainMenu = () => {
                 break;
         }
     }
-    const ask = new Ask;
     ask.askQuestion(question, cb);
 }
+
+connection.connect((err) => {
+    if (err) throw err;
+    mainMenu();
+  });
