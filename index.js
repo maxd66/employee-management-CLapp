@@ -18,6 +18,7 @@ const connection = mysql.createConnection({
 const ask = new Ask();
 let deptChoices = [];
 let roleChoices = [];
+let employeeChoices = [];
 
 const getRoles = () => {
   connection.query(`SELECT id, title FROM role`, (err, res) => {
@@ -43,7 +44,19 @@ const getDept = () => {
   });
 };
 
+const getEmployees = () => {
+  connection.query('SELECT id, first_name FROM employee', (err, res) => {
+    if (err) {console.log(err)}
+    res.forEach(({ id, first_name}) => {
+      employeeChoices.push({name: first_name, value: id});
+    });
+  });
+};
+
 const mainMenu = () => {
+  getEmployees()
+  getRoles()
+  getDept()
   const question = [
     {
       name: "menuChoice",
@@ -84,7 +97,6 @@ const mainMenu = () => {
         break;
 
       case "Add role":
-        getDept();
         const addRoleQuestion = [
           {
             name: "title",
@@ -119,7 +131,6 @@ const mainMenu = () => {
         break;
 
       case "Add employee":
-        const roles = getRoles();
         const addEmployeeQuestion = [
           {
             name: "first_name",
@@ -162,6 +173,7 @@ const mainMenu = () => {
             mainMenu()
         })
         break;
+
       case "View role":
         connection.query('SELECT * FROM role', (err,res) => {
             if(err) {console.log(err)}
@@ -170,6 +182,7 @@ const mainMenu = () => {
             mainMenu()
         })
         break;
+// Needs to be updated to include title, salary and department for each employee
       case "View employee":
         connection.query('SELECT * FROM employee', (err,res) => {
             if(err) {console.log(err)}
@@ -178,8 +191,31 @@ const mainMenu = () => {
             mainMenu()
         })
         break;
+
       case "Update employee role":
+          const updateRoleQuestion = [
+            {
+              name: "id",
+              message: "Which employee would you like to update?",
+              type: "list",
+              choices: employeeChoices
+            },
+            {
+              name: "role_id",
+              message: "Please choose a new role for this employee.",
+              type: "list",
+              choices: roleChoices,
+            },
+          ];
+            ask.askQuestion(updateRoleQuestion, (ans) => {
+                connection.query('UPDATE employee SET ? WHERE ?', [{role_id: ans.role_id},{id: ans.id}], (err, res) => {
+                    if (err) {console.log(err)};
+                    console.log('This employee has been updated!');
+                    mainMenu();
+                })
+            })
         break;
+
       case "exit":
           connection.end()
         break;
