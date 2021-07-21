@@ -41,9 +41,50 @@ const mainMenu = () => {
                     })
                 });
                 break;
+
             case 'Add role':
+                const addRoleQuestion = [{
+                    name: 'title',
+                    message: 'What is the title of the role you would like to add?',
+                    type: 'input'
+                },
+                {
+                    name: 'salary',
+                    message: 'What is the salary this role receives?',
+                    type: 'input'
+                }, 
+                {
+                    name: 'department_id',
+                    message: 'Please enter the department ID for this role.',
+                    type: 'input'
+                }]
+                ask.askQuestion(addRoleQuestion, ans => {
+                    const ansObj = {
+                        title: ans.title, 
+                        salary: parseInt(ans.salary), 
+                        department_id: parseInt(ans.department_id)
+                    };
+                    connection.query(`INSERT INTO role SET ?`, ansObj, (err, res) => {
+                      if (err) throw err;
+                      console.log(`You successfully add a new role`)
+                      mainMenu();
+                    })
+                });
                 break;
+
             case 'Add employee':
+                const addEmployeeQuestion = [{
+                    name: 'name',
+                    message: 'What is the name of the department you would like to add?',
+                    type: 'input'
+                    }]
+                ask.askQuestion(addEmployeeQuestion, ans => {
+                    connection.query(`INSERT INTO department SET ?`, ans, (err, res) => {
+                    if (err) throw err;
+                    console.log(`You successfully add a new department`)
+                    mainMenu();
+                    })
+                });
                 break;
             case 'View department':
                 break;
