@@ -155,10 +155,13 @@ const mainMenu = () => {
         break;
 
       case "View department":
+        ask.view('SELECT * FROM department');
         break;
       case "View role":
+        ask.view('SELECT * FROM role')
         break;
       case "View employee":
+        ask.view('SELECT * FROM employee')
         break;
       case "Update employee role":
         break;
