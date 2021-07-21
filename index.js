@@ -155,13 +155,28 @@ const mainMenu = () => {
         break;
 
       case "View department":
-        ask.view('SELECT * FROM department');
+        connection.query('SELECT * FROM department', (err,res) => {
+            if(err) {console.log(err)}
+            console.table(res)
+            console.log('=============================================================');
+            mainMenu()
+        })
         break;
       case "View role":
-        ask.view('SELECT * FROM role')
+        connection.query('SELECT * FROM role', (err,res) => {
+            if(err) {console.log(err)}
+            console.table(res)
+            console.log('=============================================================');
+            mainMenu()
+        })
         break;
       case "View employee":
-        ask.view('SELECT * FROM employee')
+        connection.query('SELECT * FROM employee', (err,res) => {
+            if(err) {console.log(err)}
+            console.table(res)
+            console.log('=============================================================');
+            mainMenu()
+        })
         break;
       case "Update employee role":
         break;
