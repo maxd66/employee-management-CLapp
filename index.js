@@ -37,7 +37,6 @@ const mainMenu = () => {
                     connection.query(`INSERT INTO department SET ?`, ans, (err, res) => {
                       if (err) throw err;
                       console.log(`You successfully add a new department`)
-                      console.table(res)
                       mainMenu();
                     })
                 });
