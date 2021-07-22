@@ -27,8 +27,8 @@ const getRoles = () => {
       return;
     }
     res.forEach(({ title, id }) => {
-        roleChoices.push({name: title, value: id });
-      });
+      roleChoices.push({ name: title, value: id });
+    });
   });
 };
 
@@ -39,24 +39,26 @@ const getDept = () => {
       return;
     }
     res.forEach(({ name, id }) => {
-      deptChoices.push({name: name, value: id });
+      deptChoices.push({ name: name, value: id });
     });
   });
 };
 
 const getEmployees = () => {
-  connection.query('SELECT id, first_name FROM employee', (err, res) => {
-    if (err) {console.log(err)}
-    res.forEach(({ id, first_name}) => {
-      employeeChoices.push({name: first_name, value: id});
+  connection.query("SELECT id, first_name FROM employee", (err, res) => {
+    if (err) {
+      console.log(err);
+    }
+    res.forEach(({ id, first_name }) => {
+      employeeChoices.push({ name: first_name, value: id });
     });
   });
 };
 
 const mainMenu = () => {
-  getEmployees()
-  getRoles()
-  getDept()
+  getEmployees();
+  getRoles();
+  getDept();
   const question = [
     {
       name: "menuChoice",
@@ -67,9 +69,9 @@ const mainMenu = () => {
         "Add department",
         "Add role",
         "Add employee",
-        "View department",
-        "View role",
-        "View employee",
+        "View departments",
+        "View roles",
+        "View all employees",
         "Update employee role",
         "exit",
       ],
@@ -139,9 +141,10 @@ const mainMenu = () => {
             type: "input",
           },
           {
-              name: "last_name",
-              message: "What is the last name of the employee you would like to add?",
-              type: "input"
+            name: "last_name",
+            message:
+              "What is the last name of the employee you would like to add?",
+            type: "input",
           },
           {
             name: "role_id",
@@ -151,11 +154,11 @@ const mainMenu = () => {
           },
         ];
         ask.askQuestion(addEmployeeQuestion, (ans) => {
-            const ansObj = {
-                first_name: ans.first_name,
-                last_name: ans.last_name,
-                role_id: parseInt(ans.role_id),
-              };
+          const ansObj = {
+            first_name: ans.first_name,
+            last_name: ans.last_name,
+            role_id: parseInt(ans.role_id),
+          };
           connection.query(`INSERT INTO employee SET ?`, ansObj, (err, res) => {
             if (err) throw err;
             console.log(`You successfully added a new employee`);
@@ -165,59 +168,80 @@ const mainMenu = () => {
         });
         break;
 
-      case "View department":
-        connection.query('SELECT * FROM department', (err,res) => {
-            if(err) {console.log(err)}
-            console.table(res)
-            console.log('=============================================================');
-            mainMenu()
-        })
+      case "View departments":
+        connection.query("SELECT * FROM department", (err, res) => {
+          if (err) {
+            console.log(err);
+          }
+          console.table(res);
+          console.log(
+            "============================================================="
+          );
+          mainMenu();
+        });
         break;
 
-      case "View role":
-        connection.query('SELECT * FROM role', (err,res) => {
-            if(err) {console.log(err)}
-            console.table(res)
-            console.log('=============================================================');
-            mainMenu()
-        })
+      case "View roles":
+        connection.query("SELECT * FROM role", (err, res) => {
+          if (err) {
+            console.log(err);
+          }
+          console.table(res);
+          console.log(
+            "============================================================="
+          );
+          mainMenu();
+        });
         break;
-// Needs to be updated to include title, salary and department for each employee
-      case "View employee":
-        connection.query('SELECT * FROM employee', (err,res) => {
-            if(err) {console.log(err)}
-            console.table(res)
-            console.log('=============================================================');
-            mainMenu()
-        })
+      // Needs to be updated to include title, salary and department for each employee
+      case "View all employees":
+        connection.query(
+          "SELECT employee.id, first_name, last_name, title, salary, name FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id;",
+          (err, res) => {
+            if (err) {
+              console.log(err);
+            }
+            console.table(res);
+            console.log(
+              "============================================================="
+            );
+            mainMenu();
+          }
+        );
         break;
 
       case "Update employee role":
-          const updateRoleQuestion = [
-            {
-              name: "id",
-              message: "Which employee would you like to update?",
-              type: "list",
-              choices: employeeChoices
-            },
-            {
-              name: "role_id",
-              message: "Please choose a new role for this employee.",
-              type: "list",
-              choices: roleChoices,
-            },
-          ];
-            ask.askQuestion(updateRoleQuestion, (ans) => {
-                connection.query('UPDATE employee SET ? WHERE ?', [{role_id: ans.role_id},{id: ans.id}], (err, res) => {
-                    if (err) {console.log(err)};
-                    console.log('This employee has been updated!');
-                    mainMenu();
-                })
-            })
+        const updateRoleQuestion = [
+          {
+            name: "id",
+            message: "Which employee would you like to update?",
+            type: "list",
+            choices: employeeChoices,
+          },
+          {
+            name: "role_id",
+            message: "Please choose a new role for this employee.",
+            type: "list",
+            choices: roleChoices,
+          },
+        ];
+        ask.askQuestion(updateRoleQuestion, (ans) => {
+          connection.query(
+            "UPDATE employee SET ? WHERE ?",
+            [{ role_id: ans.role_id }, { id: ans.id }],
+            (err, res) => {
+              if (err) {
+                console.log(err);
+              }
+              console.log("This employee has been updated!");
+              mainMenu();
+            }
+          );
+        });
         break;
 
       case "exit":
-          connection.end()
+        connection.end();
         break;
     }
   };
@@ -226,5 +250,5 @@ const mainMenu = () => {
 
 connection.connect((err) => {
   if (err) throw err;
-    mainMenu();
+  mainMenu();
 });
